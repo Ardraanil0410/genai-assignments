@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#070b16" />
+    <meta
+      name="description"
+      content="A focused workspace for reviewing individual public GitHub files with AI."
+    />
+    <title>AI CodeReviewer — GitHub File Review</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-cyan" aria-hidden="true"></div>
+    <div class="ambient ambient-blue" aria-hidden="true"></div>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#dashboard" aria-label="AI CodeReviewer home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M11 8 4 16l7 8M21 8l7 8-7 8M18 5l-4 22" />
+            </svg>
+          </span>
+          <span class="brand-name">AI <span>CodeReviewer</span></span>
+        </a>
+        <nav class="primary-nav" aria-label="Main navigation">
+          <a class="nav-link is-current" href="#dashboard" aria-current="page">Dashboard</a>
+          <span class="nav-link is-unavailable" aria-disabled="true">
+            GitHub Connection <span class="nav-badge">Coming Soon</span>
+          </span>
+          <span class="nav-link is-unavailable" aria-disabled="true">
+            History <span class="nav-badge">Coming Soon</span>
+          </span>
+          <span class="nav-link is-unavailable" aria-disabled="true">
+            API Docs <span class="nav-badge">Coming Soon</span>
+          </span>
+        </nav>
+        <div class="topbar-right">
+          <span
+            class="connection-status"
+            role="status"
+            aria-label="n8n connection: Not checked. No connectivity check has been run."
+            title="No n8n connectivity check has been run."
+          >
+            <span class="connection-dot" aria-hidden="true"></span>
+            <span class="connection-copy"><span class="connection-label">n8n</span> <span class="connection-value">Not checked</span></span>
+          </span>
+          <span class="developer-avatar" role="img" aria-label="Developer profile">AD</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="dashboard" id="dashboard" aria-label="File review dashboard">
+          <aside class="control-sidebar">
+            <section class="analyzer-card glass-panel" aria-labelledby="analyzer-title">
+              <div class="card-heading">
+                <div class="heading-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10l-7-7Z" />
+                    <path d="M13 3v7h7M8 14h8M8 17h6" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 id="analyzer-title">GitHub Code Analyzer</h1>
+                  <p>Review an individual public file</p>
+                </div>
+              </div>
+
+              <div class="mode-picker" role="group" aria-label="Review mode">
+                <button class="mode-option is-selected" type="button" aria-pressed="true">
+                  <span class="mode-indicator" aria-hidden="true"></span>
+                  <span>File Review</span>
+                  <span class="mode-check" aria-hidden="true">✓</span>
+                </button>
+                <button
+                  class="mode-option is-disabled"
+                  type="button"
+                  disabled
+                  aria-disabled="true"
+                  title="Pull request reviews are planned but not available yet."
+                >
+                  <span class="mode-indicator" aria-hidden="true"></span>
+                  <span>Pull Request Review</span>
+                  <span class="mode-coming-soon">Coming Soon</span>
+                </button>
+              </div>
+
+              <form class="review-form" novalidate>
+                <label for="github-url">GitHub file URL</label>
+                <div class="input-wrap">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M10 13.5a5 5 0 0 0 7.07 0l3-3A5 5 0 0 0 13 3.43l-1.72 1.71" />
+                    <path d="M14 10.5a5 5 0 0 0-7.07 0l-3 3A5 5 0 0 0 11 20.57l1.71-1.71" />
+                  </svg>
+                  <input
+                    id="github-url"
+                    name="fileUrl"
+                    type="url"
+                    inputmode="url"
+                    autocomplete="url"
+                    placeholder="https://github.com/Ardraanil0410/my_portfolio_framework/blob/main/pages/HomePage.ts"
+                    aria-describedby="url-hint url-error"
+                    aria-invalid="false"
+                    spellcheck="false"
+                  />
+                </div>
+                <p class="field-hint" id="url-hint">
+                  <span class="hint-check" aria-hidden="true">i</span>
+                  Enter a direct link to a file in a public GitHub repository.
+                </p>
+                <p class="field-error" id="url-error" role="alert" hidden></p>
+                <button class="review-button" type="submit" disabled>
+                  <span class="button-label">Review Code</span>
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M4 10h12M10 4l6 6-6 6" />
+                  </svg>
+                </button>
+                <p class="availability-note">
+                  <span class="lock-icon connection-lock" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                      <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" />
+                    </svg>
+                  </span>
+                  Enter a valid public file URL to enable review.
+                </p>
+              </form>
+
+              <div class="card-divider"></div>
+              <p class="scope-note">
+                <span class="scope-icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path d="M4 4.5h8l4 4v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-11Z" />
+                    <path d="M12 4.5v4h4M7 12h6M7 14.5h4" />
+                  </svg>
+                </span>
+                <span><strong>One file at a time.</strong> Before public use, the backend must validate URLs and restrict outbound requests.</span>
+              </p>
+            </section>
+          </aside>
+
+          <section class="results-workspace" aria-label="Review results">
+            <div class="summary-grid" aria-label="Review summary">
+              <article class="summary-card glass-panel">
+                <span class="summary-label">Code Quality Score</span>
+                <strong class="summary-value">—</strong>
+                <span class="summary-detail">Available after a review</span>
+              </article>
+              <article class="summary-card glass-panel">
+                <span class="summary-label">File Reviewed</span>
+                <strong class="summary-value summary-text">None yet</strong>
+                <span class="summary-detail">No file submitted</span>
+              </article>
+              <article class="summary-card glass-panel">
+                <span class="summary-label">Review Status</span>
+                <strong class="summary-value summary-text status-awaiting">Awaiting review</strong>
+                <span class="summary-detail">No review submitted</span>
+              </article>
+            </div>
+
+            <section class="output-card glass-panel" aria-labelledby="results-title">
+              <div class="output-topline">
+                <h2 class="workspace-title" id="results-title">AI Code Review Workspace</h2>
+                <span class="workspace-mode"><span class="output-pulse" aria-hidden="true"></span><span class="workspace-mode-label">READY</span></span>
+              </div>
+              <div class="workspace-content">
+                <div class="workspace-state waiting-state" role="status" aria-live="polite">
+                  <div class="empty-art" aria-hidden="true">
+                    <span class="orbit orbit-one"></span>
+                    <span class="orbit orbit-two"></span>
+                    <span class="orbit orbit-three"></span>
+                    <span class="radar-sweep"></span>
+                    <span class="scan-core">
+                      <svg viewBox="0 0 48 48" fill="none">
+                        <path d="m18 16-8 8 8 8M30 16l8 8-8 8M27 11l-6 26" />
+                        <path class="scan-spark" d="m34 7 .9 2.1L37 10l-2.1.9L34 13l-.9-2.1L31 10l2.1-.9L34 7Z" />
+                      </svg>
+                    </span>
+                    <span class="orbit-dot"></span>
+                  </div>
+                  <span class="empty-kicker">READY WHEN YOU ARE</span>
+                  <h3>Let’s take a closer look.</h3>
+                  <p>Paste a public GitHub file URL above, then select <strong>Review Code</strong> to begin a focused review.</p>
+                </div>
+
+                <div class="workspace-state loading-state" role="status" aria-live="polite" hidden>
+                  <span class="scan-beam" aria-hidden="true"></span>
+                  <div class="loading-art" aria-hidden="true">
+                    <span class="loading-ring"></span>
+                    <svg viewBox="0 0 48 48" fill="none">
+                      <path d="m18 16-8 8 8 8M30 16l8 8-8 8M27 11l-6 26" />
+                    </svg>
+                  </div>
+                  <span class="empty-kicker">REVIEW IN PROGRESS</span>
+                  <h3>Taking a closer look.</h3>
+                  <div class="progress-ticker" aria-label="Possible review progress messages">
+                    <ol>
+                      <li>Validating GitHub URL...</li>
+                      <li>Fetching source file...</li>
+                      <li>Analyzing code quality...</li>
+                      <li>Preparing recommendations...</li>
+                    </ol>
+                  </div>
+                  <p class="progress-disclaimer">These are progress labels, not confirmation that a step has completed.</p>
+                </div>
+
+                <div class="workspace-state error-state" role="alert" hidden>
+                  <div class="error-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M12 3 2.8 19h18.4L12 3Z" />
+                      <path d="M12 9v4M12 16.5v.1" />
+                    </svg>
+                  </div>
+                  <span class="empty-kicker error-kicker">REVIEW COULDN’T FINISH</span>
+                  <h3>We couldn’t complete this review.</h3>
+                  <p class="error-message">Check that the link points to a file in a public GitHub repository. You can retry when ready.</p>
+                  <button class="retry-button" type="button">Retry review</button>
+                </div>
+
+                <div class="workspace-state success-state" role="region" aria-label="Completed code review" hidden>
+                  <div class="success-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="m5 12 4.5 4.5L19 7" />
+                    </svg>
+                  </div>
+                  <span class="empty-kicker" role="status" aria-live="polite">ANALYSIS COMPLETE</span>
+                  <h3>AI code review</h3>
+                  <p class="review-caveat">The workflow returned review text. Its response does not confirm whether the entire source file was analyzed.</p>
+                  <article class="review-markdown" aria-label="Formatted AI code review" tabindex="0"></article>
+                </div>
+              </div>
+              <div class="output-footer">
+                <span><span class="footer-dot"></span> <span class="workspace-footer-status">Awaiting review</span></span>
+                <span class="mono-label">AI CODE REVIEWER</span>
+              </div>
+            </section>
+          </section>
+        </section>
+      </main>
+
+      <footer class="page-footer">
+        <span>Built for better code, one file at a time.</span>
+        <span class="footer-coordinates">SYSTEM STATUS <span class="status-dot"></span> DESIGN PREVIEW</span>
+      </footer>
+    </div>
+  </body>
+</html>
